@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Sanity Suite2">
+    <listeners>
+        <listener class-name="Appium.listeners.AnnotationTransformer"/>
+    </listeners>
+    <test thread-count="2" name="app-automation" preserve-order="true">
+        <classes>
+            <class name="test.InValidLogin"/>
+
+        </classes>
+    </test>
+</suite>
