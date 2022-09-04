@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Sanity Suite2" verbose="1">
+    <listeners>
+        <listener class-name="Appium.listeners.AnnotationTransformer"/>
+    </listeners>
+    <test name="app-automation" >
+        <classes>
+            <class name="test.ValidateTeamIndia"/>
+        </classes>
+    </test>
+</suite>
