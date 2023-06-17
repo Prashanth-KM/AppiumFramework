@@ -5,8 +5,8 @@ import Appium.generic.CommonFunctions;
 import Appium.utils.Constants;
 import Appium.utils.ContextManager;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import pages.Objects.DashBoardObjects;
 import java.util.Set;
@@ -28,7 +28,7 @@ public class DashBoardActions implements Constants {
 
     }
 
-    public void validateTeamIndiaPlayers(){
+    public void validateTeamIndiaPlayers() throws InterruptedException {
         commonFunction.waitAndClick(dashBoardObjects.moreTab, "More Tab");
         commonFunction.waitAndClick(dashBoardObjects.browseTeam, "Browse team");
         commonFunction.waitAndClick(dashBoardObjects.india, "India");
@@ -43,7 +43,7 @@ public class DashBoardActions implements Constants {
         Set<String> text_Set = new TreeSet<>();
         commonFunction.waitInSec(2);
         for(int i=0;i<6;i++){
-            for (MobileElement name : dashBoardObjects.playersName) {
+            for (WebElement name : dashBoardObjects.playersName) {
                 text_Set.add(commonFunction.element(name).getText());
             }
             commonFunction.swipeDown();

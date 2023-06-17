@@ -10,7 +10,7 @@ public class ValidateTeamIndia extends BaseTest {
 
 
     @Test
-    public void validateIndiaPlayers(){
+    public void validateIndiaPlayers() throws InterruptedException {
         getDashBoard().validateTeamIndiaPlayers();
 
     }

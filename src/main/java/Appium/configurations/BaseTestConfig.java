@@ -7,13 +7,12 @@ import Appium.utils.ContextManager;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.Status;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.openqa.selenium.*;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.ITestResult;
 
 import java.awt.*;
@@ -79,24 +78,24 @@ public class BaseTestConfig extends RetryAnalyzer {
     public void launchApplication() {
         try {
             System.out.println("EndPoint used is " + prop.getProperty("endpoint"));
-            DesiredCapabilities capabilities = new DesiredCapabilities();
-            capabilities.setCapability("newCommandTimeout", prop.getProperty("newCommandTimeout"));
-            capabilities.setCapability("platformName", prop.getProperty("platformName"));
-            capabilities.setCapability("platformVersion", prop.getProperty("platformVersion"));
-            capabilities.setCapability("appPackage", prop.getProperty("appPackage"));
-            capabilities.setCapability("appActivity", prop.getProperty("appActivity"));
-            capabilities.setCapability("deviceName", prop.getProperty("deviceName"));
-            capabilities.setCapability("automationName", prop.getProperty("automationName"));
-            capabilities.setCapability("systemPort", prop.getProperty("systemPort"));//remoteAppsCacheLimit
-            capabilities.setCapability("uiautomator2ServerLaunchTimeout", "80000");
-            capabilities.setCapability("adbExecTimeout", "80000");
-//            capabilities.setCapability("app", System.getProperty("user.dir") + "/" + prop.getProperty("app"));
-            capabilities.setCapability("enforceAppInstall", false);
-            capabilities.setCapability("skipDeviceInitialization",true);
-            capabilities.setCapability("noReset",true);
-            capabilities.setCapability("skipServerInstallation",true);
-            capabilities.setCapability(AndroidMobileCapabilityType.AUTO_GRANT_PERMISSIONS, true);
-            driver = new AndroidDriver<MobileElement>(new URL(prop.getProperty("endpoint")), capabilities);
+            UiAutomator2Options options = new UiAutomator2Options();
+            options.setCapability("newCommandTimeout", prop.getProperty("newCommandTimeout"));
+            options.setCapability("platformName", prop.getProperty("platformName"));
+            options.setCapability("platformVersion", prop.getProperty("platformVersion"));
+            options.setCapability("appPackage", prop.getProperty("appPackage"));
+            options.setCapability("appActivity", prop.getProperty("appActivity"));
+            options.setCapability("deviceName", prop.getProperty("deviceName"));
+            options.setCapability("automationName", prop.getProperty("automationName"));
+            options.setCapability("systemPort", prop.getProperty("systemPort"));//remoteAppsCacheLimit
+            options.setCapability("uiautomator2ServerLaunchTimeout", "80000");
+            options.setCapability("adbExecTimeout", "80000");
+//            options.setCapability("app", System.getProperty("user.dir") + "/" + prop.getProperty("app"));
+            options.setCapability("enforceAppInstall", false);
+            options.setCapability("skipDeviceInitialization",true);
+            options.setCapability("noReset",true);
+            options.setCapability("skipServerInstallation",true);
+            options.setCapability(AndroidMobileCapabilityType.AUTO_GRANT_PERMISSIONS, true);
+            driver = new AndroidDriver(new URL(prop.getProperty("endpoint")), options);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -111,22 +110,22 @@ public class BaseTestConfig extends RetryAnalyzer {
     public void launchPlayStore() {
             try {
                 System.out.println("EndPoint used is " + prop.getProperty("endpoint"));
-                DesiredCapabilities capabilities = new DesiredCapabilities();
-                capabilities.setCapability("newCommandTimeout", prop.getProperty("newCommandTimeout"));
-                capabilities.setCapability("platformName", prop.getProperty("platformName"));
-                capabilities.setCapability("platformVersion", prop.getProperty("platformVersion"));
-                capabilities.setCapability("appPackage", prop.getProperty("playstorepkg"));
-                capabilities.setCapability("appActivity", prop.getProperty("playstoreActivity"));
-                capabilities.setCapability("deviceName", prop.getProperty("deviceName"));
-                capabilities.setCapability("noSign", prop.getProperty("noSign"));
-                capabilities.setCapability("automationName", prop.getProperty("automationName"));
-                capabilities.setCapability("systemPort", prop.getProperty("systemPort"));
-                capabilities.setCapability("uiautomator2ServerLaunchTimeout", "80000");
-                capabilities.setCapability("adbExecTimeout", "80000");
-                capabilities.setCapability("skipDeviceInitialization", true);
-                capabilities.setCapability("skipServerInstallation",true);
-                capabilities.setCapability(AndroidMobileCapabilityType.AUTO_GRANT_PERMISSIONS, true);
-                driver = new AndroidDriver<MobileElement>(new URL(prop.getProperty("endpoint")), capabilities);
+                UiAutomator2Options options = new UiAutomator2Options();
+                options.setCapability("newCommandTimeout", prop.getProperty("newCommandTimeout"));
+                options.setCapability("platformName", prop.getProperty("platformName"));
+                options.setCapability("platformVersion", prop.getProperty("platformVersion"));
+                options.setCapability("appPackage", prop.getProperty("playstorepkg"));
+                options.setCapability("appActivity", prop.getProperty("playstoreActivity"));
+                options.setCapability("deviceName", prop.getProperty("deviceName"));
+                options.setCapability("noSign", prop.getProperty("noSign"));
+                options.setCapability("automationName", prop.getProperty("automationName"));
+                options.setCapability("systemPort", prop.getProperty("systemPort"));
+                options.setCapability("uiautomator2ServerLaunchTimeout", "80000");
+                options.setCapability("adbExecTimeout", "80000");
+                options.setCapability("skipDeviceInitialization", true);
+                options.setCapability("skipServerInstallation",true);
+                options.setCapability(AndroidMobileCapabilityType.AUTO_GRANT_PERMISSIONS, true);
+                driver = new AndroidDriver(new URL(prop.getProperty("endpoint")), options);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
