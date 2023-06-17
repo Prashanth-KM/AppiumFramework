@@ -20,7 +20,7 @@ public class BaseTest extends TestListener {
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
         ExtentManager.configExtentTest(getClass().getName().substring(getClass().getName().lastIndexOf('.') + 1));
-        startAppiumServer();
+//        startAppiumServer();
         launchApplication();
     }
 
@@ -38,7 +38,7 @@ public class BaseTest extends TestListener {
     @AfterClass(alwaysRun = true)
     public void afterClass() {
         closeApplication();
-        stopAppiumServer();
+//        stopAppiumServer();
     }
 
 

@@ -2,20 +2,21 @@ package Appium.generic;
 import Appium.reports.ExtentLogger;
 import Appium.utils.Constants;
 import io.appium.java_client.*;
-import io.appium.java_client.touch.WaitOptions;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.testng.Assert;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
-import static io.appium.java_client.touch.offset.PointOption.point;
 
 public class CommonFunctions implements Constants {
 
     public AppiumDriver driver;
-    WebDriverWait wait = null;
+   public static PointerInput finger1;
+    public static  Sequence sequence;
 
     public CommonFunctions(AppiumDriver driver) {
         this.driver = driver;
@@ -23,8 +24,6 @@ public class CommonFunctions implements Constants {
 
     public  void sendKeys(WebElement element, String data,String elementName)  {
         try {
-            WebDriverWait wait = new WebDriverWait(driver, 15);
-            wait.until(ExpectedConditions.visibilityOf(element));
             element.clear();
             element.sendKeys(data);
             Thread.sleep(200);
@@ -35,41 +34,20 @@ public class CommonFunctions implements Constants {
         }
     }
 
-    /**
-     * This function will wait for the element to be visible and clickable
-     *
-     */
-
-    public void waitTillTheElementIsVisibleAndClickable(MobileElement element) {
-
-        WebDriverWait wait = new WebDriverWait(driver, 15);
-        wait.until(ExpectedConditions.visibilityOf(element));
-
-        wait = new WebDriverWait(driver, 5);
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-    }
 
     /**
      * This function will wait for the element to be visible and clickable and then clicks on it
      *
      */
 
-    public void waitAndClick(MobileElement element, String elementName) {
-        waitTillTheElementIsVisibleAndClickable(element);
+    public void waitAndClick(WebElement element, String elementName) throws InterruptedException {
+        Thread.sleep(3000);
         element.click();
         ExtentLogger.info(elementName + " is Clicked");
 
 
     }
 
-    public MobileElement element(MobileElement element) {
-        try {
-            waitTillTheElementIsVisibleAndClickable(element);
-        } catch (NoSuchElementException | TimeoutException e) {
-
-        }
-        return element;
-    }
     /**
      * This Function is to generateXpath using text and Check element is present using assert
      *
@@ -78,7 +56,7 @@ public class CommonFunctions implements Constants {
      */
     public boolean generateTextXpathIsElementPresent(String text) {
         boolean flag = false;
-        List<MobileElement> elements = driver.findElements(By.xpath("//android.widget.TextView[contains(@text,'" + text + "')]"));
+        List<WebElement> elements = driver.findElements(By.xpath("//android.widget.TextView[contains(@text,'" + text + "')]"));
         if (elements.size() > 0) {
             flag = true;
             System.out.println("Check the " + text + " element is present");
@@ -94,7 +72,7 @@ public class CommonFunctions implements Constants {
      * @author Prashanth
      * @param: Mobile Element
      */
-    public boolean isElementDisplayed(MobileElement locator) {
+    public boolean isElementDisplayed(WebElement locator) {
         try {
             if (locator.isDisplayed())
                 System.out.println("Element present on screen ***********" + locator);
@@ -105,13 +83,21 @@ public class CommonFunctions implements Constants {
         }
     }
 
+    public WebElement element(WebElement element) {
+        try {
+            Thread.sleep(2000);
+        } catch (NoSuchElementException | TimeoutException | InterruptedException e) {
+
+        }
+        return element;
+    }
 
     /**
      * This Function will pause the execution for given secs.
      *
      * @param secs : No of seconds to be paused.
      */
-    public void waitInSec(int secs) {
+    public void waitInSec(long secs) {
         try {
             Thread.sleep(secs * 1000);
         } catch (InterruptedException e) {
@@ -119,28 +105,7 @@ public class CommonFunctions implements Constants {
         }
     }
 
-    /**
-     * This Function is to hide keyboard
-     *
-     */
-    public void hideKeyBoard() {
-        try {
-            ((AppiumDriver<MobileElement>) driver).hideKeyboard();
-            System.out.println("Hide KeyBoard");
-        } catch (Exception e) {
-            System.out.println("KeyBoard not found to hide");
-        }
-    }
 
-    /**
-     * This function will wait for the element to be visible
-     *
-     */
-    public MobileElement waitForElementToAppear(MobileElement id) {
-        WebDriverWait wait = new WebDriverWait(driver, 15);
-        wait.until(ExpectedConditions.visibilityOf(id));
-        return id;
-    }
     /**
      * This Function is to accept Alert
      */
@@ -153,10 +118,9 @@ public class CommonFunctions implements Constants {
         }
     }
 
-    public boolean isElementPresent(MobileElement locator) throws NoSuchElementException{
+    public boolean isElementPresent(WebElement locator) throws NoSuchElementException{
 
         try {
-            waitForElementToAppear(locator);
             if (locator.isDisplayed())
                 System.out.println("Element present on screen ***********" + locator);
             return true;
@@ -170,7 +134,7 @@ public class CommonFunctions implements Constants {
     public enum DIRECTION {
         DOWN, UP, LEFT, RIGHT;
     }
-    public static void swipe(MobileDriver driver, DIRECTION direction) {
+    public static void swipe(AppiumDriver driver, DIRECTION direction) {
         Dimension size = driver.manage().window().getSize();
 
         int startX = 0;
@@ -183,24 +147,31 @@ public class CommonFunctions implements Constants {
                 startY = (int) (size.height / 2);
                 startX = (int) (size.width * 0.90);
                 endX = (int) (size.width * 0.05);
-                new TouchAction(driver)
-                        .press(point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(3)))
-                        .moveTo(point(endX, startY))
-                        .release()
-                        .perform();
+
+                 finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
+                 sequence = new Sequence(finger1, 1)
+                        .addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                        .addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                        .addAction(new Pause(finger1, Duration.ofSeconds(2)))
+                        .addAction(finger1.createPointerMove(Duration.ofMillis(100), PointerInput.Origin.viewport(), endX, startY))
+                        .addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+                driver.perform(Collections.singletonList(sequence));
+
                 break;
 
             case LEFT:
                 startY = (int) (size.height / 2);
                 startX = (int) (size.width * 0.05);
                 endX = (int) (size.width * 0.90);
-                new TouchAction(driver)
-                        .press(point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(3)))
-                        .moveTo(point(endX, startY))
-                        .release()
-                        .perform();
+                 sequence = new Sequence(finger1, 1)
+                        .addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                        .addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                        .addAction(new Pause(finger1, Duration.ofSeconds(2)))
+                        .addAction(finger1.createPointerMove(Duration.ofMillis(100), PointerInput.Origin.viewport(), endX, startY))
+                        .addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+                driver.perform(Collections.singletonList(sequence));
 
                 break;
 
@@ -208,12 +179,14 @@ public class CommonFunctions implements Constants {
                 endY = (int) (size.height * 0.70);
                 startY = (int) (size.height * 0.30);
                 startX = (size.width / 2);
-                new TouchAction(driver)
-                        .press(point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(3)))
-                        .moveTo(point(startX, endY))
-                        .release()
-                        .perform();
+                sequence = new Sequence(finger1, 1)
+                        .addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                        .addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                        .addAction(new Pause(finger1, Duration.ofSeconds(2)))
+                        .addAction(finger1.createPointerMove(Duration.ofMillis(100), PointerInput.Origin.viewport(), startX, endY))
+                        .addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+                driver.perform(Collections.singletonList(sequence));
                 break;
 
 
@@ -221,12 +194,14 @@ public class CommonFunctions implements Constants {
                 startY = (int) (size.height * 0.70);
                 endY = (int) (size.height * 0.30);
                 startX = (size.width / 2);
-                new TouchAction(driver)
-                        .press(point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(3)))
-                        .moveTo(point(startX, endY))
-                        .release()
-                        .perform();
+                sequence = new Sequence(finger1, 1)
+                        .addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY))
+                        .addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                        .addAction(new Pause(finger1, Duration.ofSeconds(2)))
+                        .addAction(finger1.createPointerMove(Duration.ofMillis(100), PointerInput.Origin.viewport(), startX, endY))
+                        .addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+                driver.perform(Collections.singletonList(sequence));
 
                 break;
 
@@ -262,7 +237,7 @@ public class CommonFunctions implements Constants {
      * @author Prashanth
      * @param: Mobile Element & String
      */
-    public void scrollToMobileElement(MobileElement element, String scrollCount) {
+    public void scrollToMobileElement(WebElement element, String scrollCount) {
         try {
             int count = Integer.parseInt(scrollCount);
             for (int i = 0; i < count; i++) {
